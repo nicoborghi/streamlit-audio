@@ -1,5 +1,5 @@
 streamlit
-gwpy==2.0.2
+gwpy
 matplotlib
 numpy
 
