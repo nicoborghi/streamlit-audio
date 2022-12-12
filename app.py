@@ -23,7 +23,7 @@ lock = RendererAgg.lock
 # -- Helper functions in this git repo
 from helper import *
 
-apptitle = 'Signal Processing Tutorial'
+apptitle = 'Tutorial di Elaborazione dei Segnali'
 
 st.set_page_config(page_title=apptitle, page_icon=":headphones:",
                                initial_sidebar_state='collapsed')
@@ -50,7 +50,7 @@ colorednoise = weightedfreq.ifft()
 ###
 # -- Inject the signal
 ###
-secret = TimeSeries.read('LOZ_Secret.wav')
+secret = TimeSeries.read('sad_violin.wav')
 
 # -- Normalize and convert to float
 secret -= secret.value[0]  #-- Remove constant offset
@@ -58,7 +58,7 @@ secret = np.float64(secret)
 secret = secret/np.max(np.abs(secret)) * 1*1e-8   #-- Set amplitude
 secret.t0 = 4
 
-volume = st.sidebar.radio("Secret sound volume", ["Default", "Louder"])
+volume = st.sidebar.radio("Volume", ["Default", "Louder"])
 
 if volume == 'Louder':
     maze = colorednoise.inject(10*secret)
@@ -70,30 +70,30 @@ else:
 # -------
 # Begin Display Here
 # -------
-st.markdown("## Introduction")
+st.markdown("## Introduzione")
 
 st.markdown("""
-In this demo, we will try to find a **secret sound** hidden in noisy
-data.  To do this, we will practice with a few signal processing concepts:
+In questa laboratorio, cercheremo di trovare un suono nascosto nel rumore.
+Per farlo, eserciteremo alcuni concetti di elaborazione del segnale (*signal processing*):
 
- * Plotting in the time domain and frequency domain
- * Highpass and bandpass filtering
- * Whitening
+* Plot nel dominio del tempo e della frequenza
+* Filtraggio ad alta frequenza (*highpass*) e passa-banda (*passband*)
+* Whitening
 """)
 
 sectionnames = [
-                'Introduction to the frequency domain',
-                'White Noise',
-                'Red Noise',
-                'Find the Secret Sound',
+                'Introduzione dominio della frequenza (*frequency domain*)',
+                'Rumore Bianco (*white noise*)',
+                'Rumore Rosso (*red noise*)',
+                'Suono Nascosto',
                 'Whitening',
-                'Gravitational Wave Data',
+                'Dati di Onde Gravitazionali',
 ]
 
 def headerlabel(number):
     return "{0}: {1}".format(number, sectionnames[number-1])
     
-page = st.radio('Select Section:', [1,2,3,4,5,6], format_func=headerlabel)
+page = st.radio('Sezione:', [1,2,3,4,5,6], format_func=headerlabel)
 
 st.markdown("## {}".format(headerlabel(page)))
 
@@ -106,100 +106,89 @@ if page==2:
     # White Noise
     
     st.markdown("""
-    Next, let's take a look at some **white noise**.  Any 
-    signal can be represented based on its frequency content.  When we 
-    say that noise is *white*, we mean the signal has about the same 
-    amplitude at all frequencies.  
+    Il **rumore bianco** è un tipo di rumore statico che ha circa la
+    stessa ampiezza a tutte le frequenze. In altre parole, ha una
+    distribuzione di energia uniforme. Il rumore bianco viene utilizzato
+    in diverse applicazioni, come il test delle prestazioni dei sistemi
+    audio o la generazione di numeri casuali.
     
-    Below, we'll represent the **same signal three different ways**:
+    Di seguito, viene rappresentato **lo stesso segnale in tre modi diversi**:
     
-    * A time-domain signal
-    * A frequency-domain signal
-    * An audio file
+    * Nel dominio del tempo
+    * Nel dominio delle frequenze
+    * Un file audio
     """)
 
-    st.markdown("### Time domain")
+    st.markdown("### Dominio del tempo")
 
     st.markdown("""
-    In the **time domain**, we see a signal as a function of time.  The 
-    x-axis represents time, and the y-axis represents the value of
-    the signal at each time.  For an audio signal, the signal value 
-    corresponds to the amount of pressure felt on your eardrum at any 
-    moment.  For a 
-    gravitatonal-wave signal, the signal value represents the strain - 
-    or fractional change in length - of the observatory's arms.
+    L'asse x rappresenta un valore di tempo, l'asse y l'ampiezza del segnale. 
+    Per una registrazione audio, l'ampiezza del segnale corrisponde alla *quantità 
+    di pressione* percepita sulla membrana del registratore (o sul timpano) in ogni intervallo temporale. 
+    Per un'onda gravitazionale, l'ampiezza del segnale corrisponde alla *deformazione*
+    (o variazione percentuale della lunghezza) delle braccia del rivelatore.
     """)
 
     with lock:
         tplot = noise.plot(ylabel='Pressure')
         st.pyplot(tplot)
     
-    st.markdown("### Frequency domain")
+    st.markdown("### Dominio della frequenza")
 
     st.markdown("""
-    In the **frequency domain**, the x-axis represents a frequency 
-    value, and the y-axis shows the 
-    **amplitude**,
-    or the closely related amplitude spectral density,
-    of the signal at each
-    frequency.  Since white noise has about the same amplitude at each 
-    frequency, this plot is mostly flat as you move from left to right.
+    L'asse x rappresenta un valore di frequenza, l'asse y l'ampiezza (o similmente, la
+    densità spettrale di ampiezza) del segnale per ogni frequenza.
+    Poiché il rumore bianco ha circa la stessa ampiezza a ogni frequenza, questo 
+    grafico è approssimativamente piatto.
     """)
 
     with lock:
         figwn = noise.asd(fftlength=1).plot(ylim=[1e-10, 1], ylabel='Amplitude Spectral Density')
         st.pyplot(figwn)
 
-    st.markdown("### Audio player")
+    st.markdown("### Player audio")
     st.markdown("""
-    :point_right: **Use the audio player to listen the signal.  You should hear
-    a hiss of white noise**.
+    :point_right: **Usa il player audio per ascoltare un segnale di rumore bianco.**
     """)
     
     st.audio(make_audio_file(noise), format='audio/wav')
 
     st.markdown("")
-    st.markdown("""
-    When ready, go to the next section using the controls at the 
-    top.
-    """)
+
     
 if page == 3:
 
     # st.markdown("## 3: Red Noise")
     
     st.markdown("""
-    Next, we'll look at some **red noise**.  Red noise 
-    has more power at low frequencies than high frequencies.
+    Il **rumore rosso** ha più potenza alle basse frequenze.
     
-    Imagining random noise at different frequencies can be a hard thing
-    to understand.  A silly way to picture this is as a sports stadium
-    full of animals cheering. Some animals (like birds and kittens)
-    cheer with higher pitches, and other animals (like bullfrogs and 
-    lions) will cheer with lower pitches.  If the stadium has animals of 
-    all kinds in equal numbers, you might get white noise cheering.  If 
-    the stadium is full of low pitch creatures (say, lots of bullfrogs), 
-    you might get red noise cheering.  Can you imagine the difference?
+
+    Immaginare il rumore random a diverse frequenze può essere difficile da comprendere. 
     
-    A similar idea can be seen in noise in the LIGO and Virgo instruments.
-    Low frequency noise sources contribute noise at low frequencies.  These 
-    are big, slowly vibrating things, especially motion from the constant 
-    shaking of the ground, called seismic motion.  At higher frequencies, 
-    there are lots of noise souces from vibrating instrument parts, like 
-    shaking mirrors and tables.  
+    Un esempio semplice può essere una foresta, in cui i versi di alcuni animali hanno 
+    frequenze tipicamente alte (es. uccelli), mentre quelle di altri più basse (es. leoni).
+    Se il loro contributo è simile si ha rumore bianco, se il contributo al rumore dei leoni
+    è maggiore, si ha rumore rosso.
+
+    Anche negli strumenti LIGO e Virgo ci sono diverse fonti di rumore. Tipicamente, gli 
+    oggetti che vibrano alle basse frequenze contribuiscono al rumore alle basse frequenze,
+    come i moti sismici. A frequenze più alte il rumore può essere generato dalle numerose
+    parti strumentali dell'interferometro (come specchi e tavoli ottici).
+
     """)
 
     ###
     # -- Show red noise with signal
     ###
 
-    st.markdown("In the time-domain, you can see the red noise looks random.")
+    st.markdown("Nel dominio del tempo il rumore rosso sembra completamente random...")
 
     with lock:
         figrnt = maze.plot(ylabel='Pressure')
         st.pyplot(figrnt)
 
-    st.markdown("In the frequency-domain, the red noise has lots of power at low frequencies.")
+    st.markdown("... ma nel dominio della frequenza si nota che c'è molta più potenza alle basse frequenze.")
 
     with lock:
         figrn = maze.asd(fftlength=1).plot(ylabel='Amplitude Spectral Density', ylim=[1e-11, 1e-4], xlim=[30, fs/2])
@@ -207,9 +196,7 @@ if page == 3:
         
     st.audio(make_audio_file(maze), format='audio/wav')
     st.markdown("""
-    Can you hear the bullfrogs cheering?
-
-    :point_right: **How does this compare with the white noise sound?**
+    :point_right: **Come cambia rispetto al rumore bianco?**
     """)
 
 if page == 4:
@@ -220,24 +207,18 @@ if page == 4:
     # st.markdown("## 4: Find the Secret Sound")
     
     st.markdown("""
-    The red noise above isn't just noise - there's a secret sound 
-    inside.  Did you hear it?  Probably not!  All of that low-frequency
-    noise is making the secret sound very hard to hear.  But ... if the
-    secret sound is at higher frequencies, maybe we could still hear it.
+    L'audio del rumore rosso ascoltato in precedenza non contiene solo rumore: c'è
+    anche un segnale nascosto! Il rumore alle basse frequenze impedisce l'ascolto,
+    ma ci sono molte tecniche per ripulire il segnale!
     
-    What we need is a way to get rid of some of the low frequency noise, 
-    while keeping the high frequency part of the signal.  In signal processing,
-    this is known as a **high pass filter** - a filter that removes
-    low frequency sounds, and keeps (or allows to *pass*) the high frequency 
-    sounds.  The term **cutoff frequency** marks the boundary: frequencies
-    below the cuttoff frequency are removed, and frequencies above the 
-    cutoff frequency are passed.
-
-    See if you can use a high pass filter to find the secret sound.  
-
-    :point_right: **Adjust the 
-    cutoff frequency using the slider below, and see if you can remove 
-    some noise to find the secret sound.**
+    All'ordine zero, ciò di cui abbiamo bisogno è un modo per eliminare parte del 
+    rumore a basse frequenza, mantenendo la parte ad alta frequenza. 
+    In elaborazione dei segnali, questo è noto come **filtro passa-alto** (highpass)
+     - un filtro che rimuove i suoni a bassa frequenza e mantiene i suoni ad alta frequenza. 
+    Il termine **frequenza di taglio** segna il confine al di sotto del quale le frequenze 
+    vengono rimosse. 
+    
+    :point_right: **Regola la frequenza di taglio per trovare il suono nascosto.**
 
     """)
 
@@ -401,8 +382,8 @@ if page == 6:
 
 
 
-st.markdown("""## About this app
+st.markdown("""## Credits
 
-This app displays data from LIGO, Virgo, and GEO downloaded from the Gravitational Wave Open Science Center at 
-[https://gw-openscience.org](https://gw-osc.org).
+Quest app è una versione riadattata da [https://jkanner-streamlit-audio-app-86e0z3.streamlit.app/](
+streamlit-audio di Jonah Kanner) e contiene dati di LIGO, Virgo, e GEO [https://gw-openscience.org](https://gw-osc.org).
 """)
