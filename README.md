@@ -4,5 +4,4 @@ Tutorial su: grafici nel dominio del tempo e della frequenza, filtraggio band-pa
 
 Tradotto e riadattato da [streamlit-audio di Jonah Kanner](https://github.com/jkanner/streamlit-audio)
 
-[Esegui l'app!](https://share.streamlit.io/nicoborghi/streamlit-audio/main/app.py)
-
+[![Esegui in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/nicoborghi/streamlit-audio/main/app.py)
