@@ -78,7 +78,7 @@ In questo laboratorio esploreremo alcuni concetti di elaborazione del segnale
 
 Concetti chiave:
 * Grafici nel dominio del tempo e della frequenza
-* Filtraggio delle alte frequenze (*highpass*) e passa-banda (*passband*)
+* Filtraggio delle alte frequenze (*highpass*) e passa-banda (*bandpass*)
 * Whitening
 """)
 
