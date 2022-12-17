@@ -14,7 +14,7 @@ from copy import deepcopy
 import io
 from scipy import signal
 from scipy.io import wavfile
-from freqdomain2 import showfreqdomain
+from freqdomain import showfreqdomain
 
 # -- Need to lock plots to be more thread-safe
 from matplotlib.backends.backend_agg import RendererAgg
@@ -55,7 +55,7 @@ secret = TimeSeries.read('eff.wav')
 # -- Normalize and convert to float
 secret -= secret.value[0]  #-- Remove constant offset
 secret = np.float64(secret)
-secret = secret/np.max(np.abs(secret)) * 1*1e-7   #-- Set amplitude
+secret = secret/np.max(np.abs(secret)) * 1.*1e-8   #-- Set amplitude
 secret.t0 = 2
 
 volume = st.sidebar.radio("Volume", ["Default", "Louder"])
@@ -73,16 +73,17 @@ else:
 st.markdown("## Introduzione")
 
 st.markdown("""
-In questa laboratorio, cercheremo di trovare un suono nascosto nel rumore.
-Per farlo, eserciteremo alcuni concetti di elaborazione del segnale (*signal processing*):
+In questo laboratorio esploreremo alcuni concetti di elaborazione del segnale 
+(*signal processing*) e cercheremo di rivelare un suono nascosto nel rumore.
 
-* Plot nel dominio del tempo e della frequenza
+Concetti chiave:
+* Grafici nel dominio del tempo e della frequenza
 * Filtraggio ad alta frequenza (*highpass*) e passa-banda (*passband*)
 * Whitening
 """)
 
 sectionnames = [
-                'Introduzione dominio della frequenza (*frequency domain*)',
+                'Introduzione al dominio della frequenza (*frequency domain*)',
                 'Rumore Bianco (*white noise*)',
                 'Rumore Rosso (*red noise*)',
                 'Suono Nascosto',
@@ -106,11 +107,10 @@ if page==2:
     # White Noise
     
     st.markdown("""
-    Il **rumore bianco** è un tipo di rumore statico che ha circa la
-    stessa ampiezza a tutte le frequenze. In altre parole, ha una
-    distribuzione di energia uniforme. Il rumore bianco viene utilizzato
-    in diverse applicazioni, come il test delle prestazioni dei sistemi
-    audio o la generazione di numeri casuali.
+    Il **rumore bianco** è un tipo di rumore statico che ha circa la stessa ampiezza a tutte 
+    le frequenze (in altre parole, ha una distribuzione di energia uniforme). Viene utilizzato
+    in diverse applicazioni, come il test delle prestazioni dei sistemi audio o la generazione 
+    di numeri casuali.
     
     Di seguito, viene rappresentato **lo stesso segnale in tre modi diversi**:
     
@@ -126,7 +126,7 @@ if page==2:
     Per una registrazione audio, l'ampiezza del segnale corrisponde alla *quantità 
     di pressione* percepita sulla membrana del registratore (o sul timpano) in ogni intervallo temporale. 
     Per un'onda gravitazionale, l'ampiezza del segnale corrisponde alla *deformazione*
-    (o variazione percentuale della lunghezza) delle braccia del rivelatore.
+    (o variazione percentuale della lunghezza) dei bracci del rivelatore.
     """)
 
     with lock:
@@ -138,8 +138,8 @@ if page==2:
     st.markdown("""
     L'asse x rappresenta un valore di frequenza, l'asse y l'ampiezza (o similmente, la
     densità spettrale di ampiezza) del segnale per ogni frequenza.
-    Poiché il rumore bianco ha circa la stessa ampiezza a ogni frequenza, questo 
-    grafico è approssimativamente piatto.
+    Poiché il rumore bianco ha circa la stessa ampiezza a ogni frequenza, la linea è 
+    approssimativamente piatta.
     """)
 
     with lock:
@@ -163,19 +163,16 @@ if page == 3:
     st.markdown("""
     Il **rumore rosso** ha più potenza alle basse frequenze.
     
+    Com'è fatto un rumore random, ma diverso a frequenze diverse? Immaginiamo una foresta 
+    popolata da tantissimi animali che emettono versi a frequenze diverse (per esempio, animali 
+    piccoli come gli uccelli alle alte frequenze e animalii grandi come i leoni alle basse 
+    frequenze). Se il loro contributo è uniforme si ha rumore bianco, se il contributo dei 
+    leoni è molto maggiore, si ha rumore rosso.
 
-    Immaginare il rumore random a diverse frequenze può essere difficile da comprendere. 
-    
-    Un esempio semplice può essere una foresta, in cui i versi di alcuni animali hanno 
-    frequenze tipicamente alte (es. uccelli), mentre quelle di altri più basse (es. leoni).
-    Se il loro contributo è simile si ha rumore bianco, se il contributo al rumore dei leoni
-    è maggiore, si ha rumore rosso.
-
-    Anche negli strumenti LIGO e Virgo ci sono diverse fonti di rumore. Tipicamente, gli 
+    Negli strumenti LIGO e Virgo ci sono diverse fonti di rumore. Tipicamente, gli 
     oggetti che vibrano alle basse frequenze contribuiscono al rumore alle basse frequenze,
     come i moti sismici. A frequenze più alte il rumore può essere generato dalle numerose
     parti strumentali dell'interferometro (come specchi e tavoli ottici).
-
     """)
 
     ###
@@ -208,13 +205,12 @@ if page == 4:
     
     st.markdown("""
     L'audio del rumore rosso ascoltato in precedenza non contiene solo rumore: c'è
-    anche un segnale nascosto! Il rumore alle basse frequenze impedisce l'ascolto,
+    anche un segnale nascosto! Il rumore alle basse frequenze ci impedisce di rivelarlo,
     ma ci sono molte tecniche per ripulire il segnale!
     
-    All'ordine zero, ciò di cui abbiamo bisogno è un modo per eliminare parte del 
-    rumore a basse frequenza, mantenendo la parte ad alta frequenza. 
-    In elaborazione dei segnali, questo è noto come **filtro passa-alto** (highpass)
-     - un filtro che rimuove i suoni a bassa frequenza e mantiene i suoni ad alta frequenza. 
+    Come primo passo, ciò di cui abbiamo bisogno è un modo per eliminare parte del suono 
+    a basse frequenza, mantenendo la parte ad alta frequenza. Questa procedura è nota 
+    come **filtro passa-alto** (highpass). 
     Il termine **frequenza di taglio** segna il confine al di sotto del quale le frequenze 
     vengono rimosse. 
     
@@ -222,7 +218,7 @@ if page == 4:
 
     """)
 
-    lowfreq = st.slider("High pass filter cutoff frequency (Hz)", 0, 6000, 0, step=100)
+    lowfreq = st.slider("High pass filter cutoff frequency (Hz)", 0, 3000, 0, step=100)
     if lowfreq == 0: lowfreq=1
 
     highpass = maze.highpass(lowfreq)
@@ -239,21 +235,18 @@ if page == 4:
 
     st.audio(make_audio_file(highpass), format='audio/wav')
 
-    st.markdown("Can you hear the sound now?  What value of the cutoff frequency makes it easiest to hear?")
-
     st.markdown("")
-    needhint = st.checkbox("Need a hint?", value=False)
+    needhint = st.checkbox("Suggerimento?", value=False)
 
     if needhint:
 
-        st.markdown("""Here is the secret sound.  Can you find it hidden in the
-        red noise above?
+        st.markdown("""Questo è il suono nascosto nel rumore!
         """)
 
         st.audio(make_audio_file(secret), format='audio/wav')
 
-        st.markdown("""You can also make the sound easier to hear by 
-        clicking the 'Louder' option in the menu at left
+        st.markdown("""Si può anche rendere più semplice da trovare cliccando l'opzione 'Louder'
+        nel menù a sinistra.
         """)
         
 if page == 5:

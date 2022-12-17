@@ -24,25 +24,22 @@ cropend   = 1.05
 def showfreqdomain():
 
     st.markdown("""
+Se pensiamo a una rappresentazione di un segnale audio, ci verrà sicuramente in mente il 
+grafico che mostra l'ampiezza del suono al variare del tempo (grafico nel **dominio del tempo**).
+Un passo fondamentale di molti algoritmi di elaborazione dei segnali è quello di trasformare i 
+dati in una diversa rappresentazione nel **dominio della frequenza**. 
 
-INTRODUZIONE
+ALLA RICERCA DI TRE NOTE
 
-Un passo importante in molti algoritmi di elaborazione dei segnali è trasformare i dati 
-di serie temporali (punti sequenziali nel tempo) in una nuova rappresentazione nel dominio
-della frequenza. In questo tutorial, creeremo un segnale dalla somma di altri tre segnali.
-
-
-TRE NOTE
-
-Il segnale qui sotto è la somma di 3 sotto-segnali di frequenze diverse. 
+Il segnale qui sotto è la somma di 3 segnali di frequenze diverse. 
 Riesci a ricostruire le loro proprietà (ampiezza e frequenza)?
 """)
 
-    st.markdown("#### Segnale composto:")
+    st.markdown("#### Segnale target:")
 
-    sig1 = makesine(200, 4, False)
-    sig2 = makesine(250, 3, False)
-    sig3 = makesine(400, 2, False)
+    sig1 = makesine(150, 4, False)
+    sig2 = makesine(200, 2, False)
+    sig3 = makesine(350, 1, False)
     
     totalsignal = sig1+sig2+sig3
     plot_signal(totalsignal, color_num=1)
@@ -50,20 +47,19 @@ Riesci a ricostruire le loro proprietà (ampiezza e frequenza)?
     st.audio(make_audio_file(totalsignal), format='audio/wav')
 
     st.markdown("""
-    L'asse x rappresenta sempre il tempo, l'asse y rappresenta la quantità misurata 
-    in ogni campione temporale. Per il suono, questa è la pressione dell'aria che 
-    colpisce l'orecchio o la membrana del microfono in quel momento. Questo grafico è molto 
-    comune quando si registrano i dati, ma non è il modo ideale per visualizzare le proprietà del segnale.
+    L'asse x rappresenta il tempo, l'asse y rappresenta la pressione dell'aria che 
+    colpisce l'orecchio misurata in ogni intervallo temporale. In particolare, questo file
+    audio è campionato a *32000 Hz* (32mila misurazioni al secondo, ossia una misurazione
+    ogni circa 30 microsecondi). Questo tipo grafico può essere semplice da intuire, ma non 
+    è ideale per visualizzare le proprietà del segnale. 
     
-    Possiamo invece utilizzare un processo noto come trasformata di Fourier per convertire il segnale 
-    dal *dominio del tempo* al *dominio della frequenza*. 
+    Possiamo invece utilizzare un processo noto come trasformata di Fourier per convertire 
+    il segnale dal *dominio del tempo* al *dominio della frequenza*. 
     
-    :point_right: **Converti il segnale finale nel dominio della frequenza.**
-
-
+    :point_right: **Converti il segnale target al dominio della frequenza.**
     """)
 
-    showfreq = st.checkbox('Applica la trasformata di Fourier al segnale composito', value=False)
+    showfreq = st.checkbox('Applica la trasformata di Fourier al segnale target', value=False)
 
     if showfreq:
         freqdomain = totalsignal.fft()
@@ -84,20 +80,20 @@ Riesci a ricostruire le loro proprietà (ampiezza e frequenza)?
                       domain=(-0, 5),
                       clamp=True)),
             color=alt.Color('color', scale=None)
-        ).properties(title='Target Signal in Frequency Domain')
+        ).properties(title='Segnale target nel dominio della frequenza')
 
         st.altair_chart(chart, use_container_width=True)
             
         st.markdown("""
-        Il grafico nel **dominio della frequenza** mostra le componenti individuali che contribuiscono al segnale finale:
+        Il grafico nel **dominio della frequenza** mostra le sotto-componenti che contribuiscono al segnale target:
 
-        * Quali sono le 3 frequenze utilizzate?  
+        * Quali sono le 3 frequenze?  
         * Qual è la loro ampiezza?
         """)
 
 
     st.markdown("""
-    :point_right: **Prova a ricostruire il segnale finale sommando le tre componenti (note).**
+    :point_right: **Prova a ricostruire il segnale sommando le tre componenti.**
     """)
 
     st.markdown("#### Componente 1")
@@ -121,13 +117,13 @@ Riesci a ricostruire le loro proprietà (ampiezza e frequenza)?
     with lock:
         guess3 = makesine(freq3, amp3)
 
-    st.markdown("### Sommando le 3 componenti:")
+    st.markdown("### Somma:")
     
     guess  = guess1 + guess2 + guess3
 
     chart1 = plot_signal(guess, color_num=0, display=False)
     chart2 = plot_signal(totalsignal, color_num=1, display=False)
-    chart = (chart2 + chart1).properties(title='Segnale di target (arancione) & Somma (blu)')
+    chart = (chart2 + chart1).properties(title='Segnale target (arancione) & Somma (blu)')
     st.altair_chart(chart, use_container_width=True)
         
     mismatch = (totalsignal.crop(cropstart, cropend) - guess.crop(cropstart, cropend)).value.max()
