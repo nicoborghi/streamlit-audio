@@ -78,7 +78,7 @@ In questo laboratorio esploreremo alcuni concetti di elaborazione del segnale
 
 Concetti chiave:
 * Grafici nel dominio del tempo e della frequenza
-* Filtraggio ad alta frequenza (*highpass*) e passa-banda (*passband*)
+* Filtraggio delle alte frequenze (*highpass*) e passa-banda (*passband*)
 * Whitening
 """)
 
@@ -352,9 +352,9 @@ if page == 6:
     # -- Close all open figures
     plt.close('all')
 
-    st.markdown("""With the right filtering, you might be able to hear
-    the black hole signal.  It doesn't sound like much - just a quick thump.  
- """)
+    st.markdown("""Processando correttamente il segnale dovresti essere in grado di
+    ascoltare il segnale prodotto dalla fusione dei due buchi neri.
+    """)
 
     st.markdown("")
     hint = st.checkbox('Suggerimento?')
