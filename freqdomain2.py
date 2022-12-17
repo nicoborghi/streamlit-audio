@@ -28,13 +28,13 @@ def showfreqdomain():
 INTRODUZIONE
 
 Un passo importante in molti algoritmi di elaborazione dei segnali è trasformare i dati 
-di serie temporali (punti dati sequenziali nel tempo) in una nuova rappresentazione nel 
-dominio della frequenza. In questo tutorial, creeremo un segnale partendo da sotto-componenti.
+di serie temporali (punti sequenziali nel tempo) in una nuova rappresentazione nel dominio
+della frequenza. In questo tutorial, creeremo un segnale dalla somma di altri tre segnali.
 
 
 TRE NOTE
 
-Il segnale finale è la somma di 3 sotto-segnali di frequenze diverse. 
+Il segnale qui sotto è la somma di 3 sotto-segnali di frequenze diverse. 
 Riesci a ricostruire le loro proprietà (ampiezza e frequenza)?
 """)
 
@@ -139,10 +139,10 @@ Riesci a ricostruire le loro proprietà (ampiezza e frequenza)?
     elif mismatch < 3:
         st.markdown("### Quasi!")    
     
-    st.markdown("#### Audio per il segnale finale (target)")
+    st.markdown("#### Segnale target")
     st.audio(make_audio_file(totalsignal), format='audio/wav')
 
-    st.markdown("#### Audio per il segnale ottenuto sommando i 3 contributi")
+    st.markdown("#### Segnale ottenuto sommando i 3 contributi")
     st.audio(make_audio_file(guess), format='audio/wav')
     
     

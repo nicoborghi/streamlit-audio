@@ -50,13 +50,13 @@ colorednoise = weightedfreq.ifft()
 ###
 # -- Inject the signal
 ###
-secret = TimeSeries.read('sad_violin.wav')
+secret = TimeSeries.read('eff.wav')
 
 # -- Normalize and convert to float
 secret -= secret.value[0]  #-- Remove constant offset
 secret = np.float64(secret)
-secret = secret/np.max(np.abs(secret)) * 1*1e-8   #-- Set amplitude
-secret.t0 = 4
+secret = secret/np.max(np.abs(secret)) * 1*1e-7   #-- Set amplitude
+secret.t0 = 2
 
 volume = st.sidebar.radio("Volume", ["Default", "Louder"])
 
@@ -222,7 +222,7 @@ if page == 4:
 
     """)
 
-    lowfreq = st.slider("High pass filter cutoff frequency (Hz)", 0, 3000, 0, step=100)
+    lowfreq = st.slider("High pass filter cutoff frequency (Hz)", 0, 6000, 0, step=100)
     if lowfreq == 0: lowfreq=1
 
     highpass = maze.highpass(lowfreq)
@@ -383,7 +383,6 @@ if page == 6:
 
 
 st.markdown("""## Credits
-
-Quest app è una versione riadattata da [https://jkanner-streamlit-audio-app-86e0z3.streamlit.app/](
-streamlit-audio di Jonah Kanner) e contiene dati di LIGO, Virgo, e GEO [https://gw-openscience.org](https://gw-osc.org).
+Questa app è riadattata da 
+[streamlit-audio di Jonah Kanner](https://github.com/jkanner/streamlit-audio) e contiene dati di LIGO, Virgo, e GEO [https://gw-openscience.org](https://gw-osc.org).
 """)
