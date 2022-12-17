@@ -1,8 +1,10 @@
-## Signal Processing Tutorial
+## Tutorial di Elaborazione dei Segnali
 
-This tutorial demonstrates band-pass filtering and whitening.
+Tutorial su: filtraggio band-pass e whitening.
 
-This app makes use of audio adopted from [HTW](https://www.ZeldaSounds.com)
+Tradotto e riadattato da 
 
-[Run the app!](https://share.streamlit.io/jkanner/streamlit-audio/main/app.py)
+[streamlit-audio di Jonah Kanner](https://github.com/jkanner/streamlit-audio)
+
+[Run the app!](https://share.streamlit.io/nicoborghi/streamlit-audio/main/app.py)
 
