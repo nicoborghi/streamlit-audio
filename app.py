@@ -50,7 +50,7 @@ colorednoise = weightedfreq.ifft()
 ###
 # -- Inject the signal
 ###
-secret = TimeSeries.read('eff.wav')
+secret = TimeSeries.read('sound.wav')
 
 # -- Normalize and convert to float
 secret -= secret.value[0]  #-- Remove constant offset
@@ -88,7 +88,7 @@ sectionnames = [
                 'Rumore Rosso (*red noise*)',
                 'Suono Nascosto',
                 'Whitening',
-                'Dati di Onde Gravitazionali',
+                'Onde Gravitazionali',
 ]
 
 def headerlabel(number):
@@ -253,17 +253,16 @@ if page == 5:
     # st.markdown("## 5: Whitening")
 
     st.markdown("""
-    **Whitening** is a process that re-weights a signal, so that all
-    frequency bins have a nearly equal amount of noise.  In our example,
-    it is hard to hear the signal, because all of the low-frequency 
-    noise covers it up.  By whitening the data,
-    we can prevent the low-frequency noise from dominating what we hear. 
-    
-    :point_right: **Use the checkbox to whiten the data**
+    Il **whitening** è un processo che ripesa un segnale in modo tale che tutti gli intervalli
+    di frequenza abbiano circa lo stesso livello di rumore. Nell'esempio precedente, la rivelazione
+    del segnale è compromessa dall'alto rumore alle basse frequenze. Tuttavia, "sbiancando" il segnale 
+    riusciamo a ridurre significativamente questo contributo.
+
+    :point_right: **Ripulisci il suono con un metodo alternativo**
     """)
 
     
-    whiten = st.checkbox("Whiten the data?", value=False)
+    whiten = st.checkbox("Applica whitening", value=False)
 
     if whiten:
         whitemaze = maze.whiten()
@@ -271,12 +270,10 @@ if page == 5:
         whitemaze = maze
 
     st.markdown("""
-    After whitening, you can see the secret sound in the time domain.  You 
-    may also notice that the whitened signal gently fades in at the beginning,
-    and 
-    out at the end - this gentle turn on / turn off is due to 
-    **windowning**, and is important to apply in many signal processing
-    applications.
+    In seguito al whitening, emerge chiaramente il segnale del suono nascosto. Si può anche
+    notare che il segnale processato sfuma gradualmente all'inizio e alla fine: questo è 
+    dovuto all'utilizzo di una funzione finestra (*window/tapering function*) che è fondamentale
+    per definire l'intervallo entro cui, via via, rinormalizzare il rumore.
     """)
     
     st.pyplot(whitemaze.plot())
@@ -287,25 +284,24 @@ if page == 5:
     
     st.audio(make_audio_file(whitemaze), format='audio/wav')
 
-    st.markdown("""Try using the checkbox to whiten the data.  Is it 
-    easier to hear the secret sound with or without whitening?
-    """)
-
 
 if page == 6:
 
     # st.markdown("## 6: Gravitational Wave Data")
 
     st.markdown("""
-    Finally, we'll try what we've learned on some real 
-    gravitational-wave data from LIGO, around the binary black 
-    hole signal GW150914.  We'll add one more element: 
-    a **bandpass filter**.  A bandpass filter uses both a low frequency
-    cutoff and a high frequency cutoff, and only passes signals in the 
-    frequency band between these values. 
+    Infine, proviamo ad applicare i concetti di questo breve tutorial ad alcuni dari reali
+    di onde gravitazionali. In particolare utilizzaremo il primissimo evento rivelato il 
+    14 settembre 2015 (GW150914), generato dalla fusione di due buchi neri distanti più di 
+    un miliardo di anni luce dalla Terra. 
 
-    :point_right: **Try using a whitening filter and a band-pass filter to reveal the
-    gravitational wave signal in the data below.**  
+    
+    Aggiungeremo un ultimo concetto di eleborazione dei segnali: il *filtro passa-banda* 
+    (**bandpass**), ossia un filtro che taglia le frequenze sotto una data soglia e quelle
+    sopra a una data soglia (passa soltanto quelle intermedie). 
+
+    :point_right: **Utilizza un filtro di whitening e un filtro passa-banda per rivelare
+    il segnale di onde gravitazionali.**  
     """)
 
     detector = 'H1'
@@ -319,12 +315,12 @@ if page == 6:
 
     # -- Try whitened and band-passed plot
     # -- Whiten and bandpass data
-    st.subheader('Whitened and Bandbassed Data')
+    st.subheader('Segnale processato')
 
     lowfreqreal, highfreqreal = st.slider("Band-pass filter cutoff (Hz)",
-                                          1, 2000, value=(1,2000) )
+                                          1, 1300, value=(1,1300) )
 
-    makewhite = st.checkbox("Apply whitening", value=False)
+    makewhite = st.checkbox("Applica whitening", value=False)
 
     if makewhite:
         white_data = strain.whiten()
@@ -334,7 +330,7 @@ if page == 6:
     bp_data = white_data.bandpass(lowfreqreal, highfreqreal)
 
     st.markdown("""
-    With the right filtering, you might be able to see the signal in the time domain plot.
+    Con il filtraggio corretto si può far emergere il segnale nel grafico.
     """)
 
     with lock:
@@ -361,14 +357,14 @@ if page == 6:
  """)
 
     st.markdown("")
-    hint = st.checkbox('Need a hint?')
+    hint = st.checkbox('Suggerimento?')
 
     if hint:
 
-        st.markdown("""
-        Hint: Try using a band pass from 30 to 400 Hz, with whitening on.
-        This is similar to what was used for Figure 1 of the 
-        [GW150914 discovery paper](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102), also shown below:
+        st.markdown("""Prova ad applicare il whitening e utilizza un filtro passa-banda 
+        da 30 a 400 Hz. Questo, in prima approssimazione, è lo stesso processo utilizzato per la
+        Figura 1 dell'articolo scientifico sulla 
+        [scoperta di GW150914](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102):
         """)
         
         st.image('https://journals.aps.org/prl/article/10.1103/PhysRevLett.116.061102/figures/1/large')
